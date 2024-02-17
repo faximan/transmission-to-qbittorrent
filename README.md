@@ -8,10 +8,8 @@ Transfer all torrents in [Transmission](https://transmissionbt.com/) to [qBittor
 
 1. Download this repository.
 
-2. Make sure the script can access the Transmission's torrent file directory and resume file directory.
-   
-   The torrent file directory contains all torrent files <torrent_hash>.torrent.
-   
+2. Make sure the script can access the Transmission's torrent file directory and resume file directory. The torrent file directory contains all torrent files <torrent_hash>.torrent.
+
 3. If Transmission and qBittorrent are running in Docker containers, make sure their torrent download directories are the same in both Docker containers.
 
 4. Make sure that the Python 3 runtime exists.

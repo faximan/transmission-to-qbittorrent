@@ -1,4 +1,5 @@
 import json
+import os
 import time
 from pathlib import Path
 from typing import Literal
@@ -87,9 +88,11 @@ def main():
 
         category: str = Path(tr_torrent.download_dir).name
 
+        filepath = config['transmission']['torrent_dir'] + os.path.basename(tr_torrent.torrent_file)
+
         # Add torrent to qBittorrent.
         qb_client.torrents_add(
-            torrent_files=open(tr_torrent.torrent_file, 'rb'),
+            torrent_files=open(filepath, 'rb'),
             save_path=tr_torrent.download_dir,
             rename=tr_torrent.name,
             category=category,
@@ -103,17 +106,22 @@ def main():
 
         time.sleep(1)
 
-
+# Transmission doesn't differ between torrent and (single) file name. QBittorrent does.
+# This can be used to rename the files in Qbit to make it find the files on disk.
+# Use with caution, also it does not work well for torrents with a single folder containing
+# a single file.
 def fix_renamed():
     torrent: TorrentDictionary
-
     for torrent in qb_client.torrents.info():
-        files = torrent.files
-        if len(files) == 1:
-            file: TorrentFile = torrent.files[0]
-            torrent.rename_file(file.id, torrent.info.name)
+        # Set in QBT to avoid messing with good torrents.
+        if torrent.tags == "broken":
+            files = torrent.files
+            if len(files) == 1:
+                file: TorrentFile = torrent.files[0]
+                torrent.rename_file(file.id, torrent.info.name)
+                print(torrent.info.name)
 
 
 if __name__ == "__main__":
-    # main()
-    fix_renamed()
+    main()
+    # fix_renamed()
